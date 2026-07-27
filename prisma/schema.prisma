@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  LOST
+  CONVERTED
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String
+  email         String       @unique
+  password      String       // Hashed with bcrypt
+  role          Role         @default(MEMBER)
+  assignedLeads Lead[]       @relation("LeadAssignment")
+  notes         Note[]
+  activities    ActivityLog[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Lead {
+  id             String       @id @default(cuid())
+  name           String       // Prospect name
+  email          String       // Prospect email
+  phone          String?
+  company        String?
+  status         LeadStatus   @default(NEW)
+  
+  // Assignment relation
+  assignedToId   String?
+  assignedTo     User?        @relation("LeadAssignment", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  notes          Note[]
+  activities     ActivityLog[]
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([status])
+  @@index([assignedToId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  content   String
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g., "STATUS_CHANGED", "ASSIGNED", "NOTE_ADDED"
+  details   String   // Human-readable description
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId    String?  // Nullable if triggered by public form submission
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+}
