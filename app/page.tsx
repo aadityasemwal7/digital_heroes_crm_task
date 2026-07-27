@@ -55,8 +55,8 @@ export default function Home() {
             </div>
             <span className="font-bold text-xl text-slate-800 tracking-tight">Digital Heroes</span>
           </div>
-          <Link 
-            href="/login" 
+          <Link
+            href="/login"
             className="text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-md transition-colors"
           >
             Team Login &rarr;
@@ -73,7 +73,7 @@ export default function Home() {
               Ready to scale your business?
             </h1>
           </div>
-          
+
           <div className="p-8">
             <p className="text-sm text-slate-500 mb-8 text-center">
               Leave your details below and one of our experts will get back to you within 24 hours.
@@ -84,7 +84,7 @@ export default function Home() {
                 {status.message}
               </div>
             )}
-            
+
             {status.type === 'error' && (
               <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm font-medium">
                 {status.message}
@@ -178,10 +178,10 @@ export default function Home() {
       <footer className="bg-white border-t border-slate-200 py-6 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col items-center justify-center gap-2">
           <p className="text-sm text-slate-500 font-medium">
-            Built for{' '}
-            <a 
-              href="https://digitalheroesco.com" 
-              target="_blank" 
+            Built By Aaditya Semwal for{' '}
+            <a
+              href="https://digitalheroesco.com"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-600 hover:text-indigo-800 hover:underline transition-colors font-semibold"
             >

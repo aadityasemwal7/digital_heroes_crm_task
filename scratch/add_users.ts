@@ -25,9 +25,9 @@ async function main() {
 
     console.log("Executing SQL Query...");
     console.log(query);
-    
+
     await prisma.$executeRawUnsafe(query);
-    
+
     console.log('✅ Successfully added 3 Sales Reps and 3 Members using raw SQL!');
 }
 
