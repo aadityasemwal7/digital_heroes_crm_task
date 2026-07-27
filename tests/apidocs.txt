@@ -1,0 +1,102 @@
+================================================================================
+DIGITAL HEROES CRM - API DOCUMENTATION & README
+================================================================================
+
+## 1. Tech Stack & Architecture
+* Framework: Next.js (App Router, TypeScript)
+* Database & ORM: PostgreSQL, Prisma ORM
+* Authentication: NextAuth v5 (Credentials Provider, JWT Sessions)
+* Styling: Tailwind CSS
+
+---
+
+## 2. Environment Variables (.env)
+DATABASE_URL="postgresql://user:password@localhost:5432/crm_db?schema=public"
+AUTH_SECRET="your-super-secret-jwt-key"
+
+---
+
+## 3. Local Setup & Installation
+1. Clone the repository:
+   git clone https://github.com/your-username/digital-heroes-crm.git
+   cd digital-heroes-crm
+
+2. Install dependencies:
+   npm install
+
+3. Run database migrations:
+   npx prisma migrate dev
+
+4. Seed the database with default users (Admin & Member):
+   npx prisma db seed
+
+5. Run the development server:
+   npm run dev
+
+---
+
+## 4. Live Test Credentials
+* Admin Account: admin@digitalheroes.com / password123
+  (Full permissions: view all leads, assign leads, update status, write notes)
+* Member Account: member@digitalheroes.com / password123
+  (Restricted permissions: view/update assigned leads, write notes; assignment restricted with 403 Forbidden)
+
+---
+
+## 5. API Endpoints Reference
+
+### A. Public Lead Capture
+* Endpoint: POST /api/leads
+* Access: Public (Unauthenticated)
+* Description: Submits a new inbound prospect lead from the landing page.
+* Request Body:
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+15550000000",
+    "company": "Acme Corp"
+  }
+* Response: 201 Created
+
+### B. List Leads (Paginated & Filtered)
+* Endpoint: GET /api/leads
+* Access: Authenticated (Admin / Member)
+* Query Parameters:
+  - page (default: 1)
+  - limit (default: 10)
+  - status (NEW, CONTACTED, QUALIFIED, LOST, CONVERTED)
+  - assignedToId (filter by user ID)
+* Response: 200 OK with lead array and pagination metadata.
+
+### C. Get Single Lead Details
+* Endpoint: GET /api/leads/[id]
+* Access: Authenticated
+* Description: Fetches lead details along with nested notes and chronological activity audit trail.
+* Response: 200 OK or 404 Not Found.
+
+### D. Update Lead Status / Assignment (RBAC Enforced)
+* Endpoint: PATCH /api/leads/[id]
+* Access: Authenticated
+* Rules: 
+  - Both ADMIN and MEMBER can update the lead `status`.
+  - Only ADMIN can modify `assignedToId`. Members attempting to reassign receive a 403 Forbidden response.
+* Request Body:
+  {
+    "status": "CONTACTED",
+    "assignedToId": "user-uuid-string"
+  }
+* Response: 200 OK or 403 Forbidden / 401 Unauthorized.
+
+### E. Add Note to Lead
+* Endpoint: POST /api/leads/[id]/notes
+* Access: Authenticated
+* Description: Appends a timestamped note and automatically logs an entry in the activity audit trail.
+* Request Body:
+  {
+    "content": "Follow-up call completed successfully."
+  }
+* Response: 201 Created.
+
+---
+Built for Digital Heroes Training Task (https://digitalheroesco.com)
+================================================================================
